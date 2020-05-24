@@ -1,4 +1,5 @@
-# Freifunk Augsburg Docker build image (https:augsburg.freifunk.net)
+# Freifunk Augsburg Docker build image
+Docker image to build firmware images for Freifunk Augsburg (https:augsburg.freifunk.net)
 
 ## Prequistories: How to install Docker (for Ubuntu)
 Follow the Howto from Docker: (https://docs.docker.com/engine/install/ubuntu/)
