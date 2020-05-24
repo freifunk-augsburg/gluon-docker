@@ -1,52 +1,43 @@
-# Freifunk Magdeburg Docker build image
+# Freifunk Augsburg Docker build image (https:augsburg.freifunk.net)
 
-Docker image to build firmware for the [Freifunk Magdeburg](http://md.freifunk.net) community.
+## Prequistories: How to install Docker (for Ubuntu)
+Follow the Howto from Docker: (https://docs.docker.com/engine/install/ubuntu/)
+  sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent  software-properties-common
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  sudo apt-get update
+  sudo apt-get install docker-ce docker-ce-cli containerd.io
 
-The build process is started automatically when the container is run. There is no need to manually run commands inside the container anymore.
+This Docker image is a first try to ease setting up a fully working build environment for gluon based firmwares with the new bable-based routing algorithm. The build process is started automatically when the container is run. There is no need to manually run commands inside the container anymore.
 
-## Shell trail
+## Setting up a docker environment for automatised build process
+Clone repository:
 
-This section shows the commands that are needed to run a build with the Docker image. Make sure you know what you are doing before hitting the Enter key.
-
-
-Clone the repository:
-
-    git clone https://github.com/FreifunkMD/gluon-docker
-    cd gluon-docker/
+  git clone https://github.com/freifunk-augsburg/gluon-docker.git
+  cd gluon-Docker
 
 Use the following commands on the host to create and run the docker image:
 
-    docker build -t ffmd-v2016.2.7 .
-    docker run -it --name ffmd ffmd-v2016.2.7
+  docker build -t ffa-v2020.0.1 .
+  docker run -it --name ffa ffa-v2020.0.1
 
 The container will automatically start the firmware build process.
 
-The build process can be configured with build arguments:
+We highly suggest adding some parameters to bind the directories `firmware` and `openwrt_build` in the current working directory to the container's output directories
 
-    docker build --build-arg FFMD_VERSION=tags/v0.38-beta.1 -t ffmd-v2016.2.7 .
-
-To start the container with an arbitrary command, you can:
-
-	docker run -it --name ffmd ffmd-v2016.2.7 "/bin/bash"
+docker run -it --name ffa \
+  -v "$(pwd)/firmwares:/gluon/output" \
+  -v "$(pwd)/openwrt_build:/gluon/openwrt/build_dir" \
+  ffa-v2020.0.1
 
 You can run a shell in an existing container with the following command:
 
-    docker exec -it ffmd /bin/bash
+  docker exec -it ffa /bin/bash
 
 To restart the image once it has been stopped:
 
-    docker start -i ffmd
+  docker start -i ffa
 
 Once you are done, container and image can be deleted by calling
-
-    docker rm ffmd
-    docker rmi ffmd-v2017.2.7
-
-The build needs up to 60 GB of hard disk space. If the docker environment cannot provide the neccessary space, the paths `/gluon/output` and `/gluon/openwrt/build_dir` should be bound to a different directory:
-
-    docker run -it --name ffmd \
-        -v "$(pwd)/firmwares:/gluon/output" \
-        -v "$(pwd)/openwrt_build:/gluon/openwrt/build_dir" \
-        ffmd-v2016.2.7
-
-This will create and bind the directories `firmware` and `openwrt_build` in the current working directory to the container's output directories.
+  docker rm ffa
+  docker rmi ffa-v2020.0.1
